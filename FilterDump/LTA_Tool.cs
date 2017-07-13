@@ -178,19 +178,19 @@ namespace FilterDump
                     foreach(DataRow dr in drs2)
                     {
                         dts.ImportRow(dr);
-                        dr.Delete();
+                        dtOrigCloned.Rows.Remove(dr);
                     }
-                    dataGridView1.DataSource = dts;
-                    lblNumLines.Text = dts.Rows.Count.ToString();
+                    dataGridView1.DataSource = dtOrigCloned;
+                    lblNumLines.Text = dtOrigCloned.Rows.Count.ToString();
                     //dtOrigCloned = Delete(dtOrigCloned, dtOrigCloned.Select("[" + dtOrigCloned.Columns["Option price"] + "]" + " is null "));
                     //dtOrigCloned = Delete(dtOrigCloned, dtOrigCloned.Select("[" + dtOrigCloned.Columns["Default status (True=Default/False=Non Default)"] + "]" + " in ('FALSE') AND " + "[" + dtOrigCloned.Columns["sales_media_code"] + "]" + " in ('B') AND " + "[" + dtOrigCloned.Columns["Option price"] + "]" + " in (999999.99, 9999999.99)"));
 
                     string filter2 = dtOrigCloned.Columns["catalog_id"] + " = " + "[" + dts.Columns["catalog_id"] + "]" + " AND " + "[" + dtOrigCloned.Columns["order_code"] + "]" + " = " + "[" + dts.Columns["order_code"] + "]" + " AND " + "[" + dtOrigCloned.Columns["Module_id"] + "]" + " = " + "[" + dts.Columns["Module_id"] + "]" + " AND " + "[" + dtOrigCloned.Columns["option_ID"] + "]" + " = " + "[" + dts.Columns["option_ID"] + "]";
                     
 
-                    dtOrigCloned = Delete(dtOrigCloned, filter2);
-                    dataGridView1.DataSource = dtOrigCloned;
-                    lblNumLines.Text = dtOrigCloned.Rows.Count.ToString();
+                    //dtOrigCloned = Delete(dtOrigCloned, filter2);
+                    //dataGridView1.DataSource = dtOrigCloned;
+                    //lblNumLines.Text = dtOrigCloned.Rows.Count.ToString();
                     /*dataGridView1.DataSource = dts;
                     lblNumLines.Text = dts.Rows.Count.ToString();
                     //dataGridView1.DataSource = dtOrigCloned;
