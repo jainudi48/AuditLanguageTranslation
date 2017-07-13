@@ -44,6 +44,7 @@
             this.label3 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
             this.catelogText = new System.Windows.Forms.TextBox();
+            this.lblNumLines = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             this.panel1.SuspendLayout();
             this.regionGroupBox.SuspendLayout();
@@ -65,7 +66,7 @@
             this.dataGridView1.Location = new System.Drawing.Point(13, 222);
             this.dataGridView1.Name = "dataGridView1";
             this.dataGridView1.RowTemplate.Height = 28;
-            this.dataGridView1.Size = new System.Drawing.Size(1304, 383);
+            this.dataGridView1.Size = new System.Drawing.Size(1877, 758);
             this.dataGridView1.TabIndex = 1;
             // 
             // label1
@@ -79,6 +80,7 @@
             // 
             // panel1
             // 
+            this.panel1.Controls.Add(this.lblNumLines);
             this.panel1.Controls.Add(this.regionGroupBox);
             this.panel1.Controls.Add(this.orderStatusCombo);
             this.panel1.Controls.Add(this.languageCombo);
@@ -93,7 +95,7 @@
             this.panel1.Controls.Add(this.label1);
             this.panel1.Location = new System.Drawing.Point(16, 12);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(989, 195);
+            this.panel1.Size = new System.Drawing.Size(1739, 195);
             this.panel1.TabIndex = 3;
             this.panel1.Paint += new System.Windows.Forms.PaintEventHandler(this.panel1_Paint);
             // 
@@ -203,15 +205,25 @@
             this.catelogText.Size = new System.Drawing.Size(361, 26);
             this.catelogText.TabIndex = 3;
             // 
+            // lblNumLines
+            // 
+            this.lblNumLines.AutoSize = true;
+            this.lblNumLines.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.lblNumLines.Location = new System.Drawing.Point(1192, 36);
+            this.lblNumLines.Name = "lblNumLines";
+            this.lblNumLines.Size = new System.Drawing.Size(2, 22);
+            this.lblNumLines.TabIndex = 15;
+            // 
             // LTA_Tool
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1329, 630);
+            this.ClientSize = new System.Drawing.Size(1902, 992);
             this.Controls.Add(this.panel1);
             this.Controls.Add(this.dataGridView1);
             this.Name = "LTA_Tool";
             this.Text = "Language Translation";
+            this.WindowState = System.Windows.Forms.FormWindowState.Maximized;
             this.Load += new System.EventHandler(this.Form1_Load);
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).EndInit();
             this.panel1.ResumeLayout(false);
@@ -240,6 +252,7 @@
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.TextBox catelogText;
         private System.Windows.Forms.GroupBox regionGroupBox;
+        private System.Windows.Forms.Label lblNumLines;
     }
 }
 

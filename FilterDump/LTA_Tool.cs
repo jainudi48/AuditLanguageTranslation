@@ -57,51 +57,24 @@ namespace FilterDump
             language = languageItem.Value.ToString().Trim();
             Item orderStatusCodeItem = (Item)orderStatusCombo.SelectedItem;
             orderStatusCode = orderStatusCodeItem.Name.ToString().Trim();
-
-            MessageBox.Show(catelogId + "\n" + brandId + "\n" + chassisId + "\n" + language + "\n" + orderStatusCode);
-        }
-        public DataSet Parse(string fileName, string workSheetName)
-        {
-            string connectionString = string.Format("provider=Microsoft.Jet.OLEDB.4.0; data source={0};Extended Properties=Excel 8.0;", fileName);
-            string query = string.Format("SELECT * FROM [{0}$]", workSheetName);
-
-            DataSet dataSet = new DataSet();
-            using (System.Data.OleDb.OleDbConnection con = new OleDbConnection(connectionString))
-            {
-                con.Open();
-                OleDbDataAdapter adapter = new OleDbDataAdapter(query, con);
-                adapter.Fill(dataSet);
-                DataTable dtOrig = dataSet.Tables[0];
-                DataRow[] drFiltered1 = dtOrig.Select(dtOrig.Columns["Default status (True=Default/False=Non Default)"] + " in ('FALSE') and " + dtOrig.Columns["sales_media_code"] + " in ('B') and " + dtOrig.Columns["Option price"] + " in ('999999.99', '9999999.99', '')");
-
-                DataTable dtFiltered1 = null;
-                foreach(DataRow dr in drFiltered1)
-                {
-                    dtFiltered1.ImportRow(dr);
-                }
-                string filter = dtOrig.Columns["Default status (True=Default/False=Non Default)"] + " in ('FALSE') and " + dtOrig.Columns["sales_media_code"] + " in ('B') and " + dtOrig.Columns["Option price"] + " in ('999999.99', '9999999.99', '')"; 
-                Delete(dtOrig, filter);
-
-                DataRow[] dtFiltered2 = dtOrig.Select( dtOrig.Columns["catelog_id"] + " = " + dtFiltered1.Columns["catelog_id"] + " AND " + dtOrig.Columns["order_code"] + " = " + dtFiltered1.Columns["order_code"] + " AND " + dtOrig.Columns["Module_id"] + " = " + dtFiltered1.Columns["Module_id"] + " AND " + dtOrig.Columns["option_ID"] + " = " + dtFiltered1.Columns["option_ID"]);
-            }
-            return dataSet;
         }
 
         public DataTable Delete(DataTable table, string filter)
         {
-            Delete(table.Select(filter));
+            table = Delete(table, table.Select(filter));
             return table;
         }
-        public void Delete(this IEnumerable<DataRow> rows)
+        public DataTable Delete(DataTable table, DataRow[] rows)
         {
             foreach (var row in rows)
                 row.Delete();
+            return table;
         }
         public void ParseSqlData()
         {
             string connetionString = null;
-            //string queryString = "select * from order_code";
-            string queryString = "select DISTINCT" +
+            string queryString = "select * from Logfile";
+            /*string queryString = "select DISTINCT" +
        "c.catalog_id," +
        "a1.catalog_name," +
        "g.brand_id," +
@@ -169,29 +142,91 @@ namespace FilterDump
        ",a.current_status_code" +
        ",a.sales_media_code" +
        ",i.reason" +
-       ",l.item_unit_price;";
-            SqlConnection cnn;
-            SqlCommand command;
-            connetionString = "Data Source=AUSOLDBPSRPT02.PRODUCTION.ONLINE.DELL.COM;Initial Catalog=ConfigStaging_Emea;Integrated Security=True";
+       ",l.item_unit_price;";*/
 
-            using (SqlConnection connection = new SqlConnection(connetionString))
+
+            //connetionString = "Data Source=AUSOLDBPSRPT02.PRODUCTION.ONLINE.DELL.COM;Initial Catalog=ConfigStaging_Emea;Integrated Security=True";
+            connetionString = @"Data Source=W10H6DGPF2\SQLEXPRESS;Initial Catalog=Sample;Integrated Security=True";
+            SqlConnection connection = null;
+            using (connection = new SqlConnection(connetionString))
             {
-                command = new SqlCommand(queryString, connection);
-               
+                DataSet dataSet = new DataSet();
+                //command = new SqlCommand(queryString, connection);
                 try
                 {
-                    connection.Open();
-                    SqlDataReader reader = command.ExecuteReader();
-                }
-               finally
-                {
-                    //reader.Close;
-                    connection.Close();
-                                      
-                 }
-             
-            }
+                    SqlDataAdapter adapter = new SqlDataAdapter(queryString, connection);
+                    adapter.Fill(dataSet);
+                    
+                    DataTable dtOrigCloned = dataSet.Tables[0];
+                    dtOrigCloned.Columns.Add("SNo", typeof(Int32));
+                    int i=1;
+                    foreach(DataRow dr in dtOrigCloned.Rows)
+                    {
+                        dr["SNo"] = i++;
+                    }
+                    DataTable dtOrig = dtOrigCloned.Clone();
+                    dtOrig.Columns["Option price"].DataType = typeof(string);
+                    
+                    //DataRow[] drs = dtOrigCloned.Select("[" + dtOrigCloned.Columns["Option price"] + "]" + " is null ");
+                    DataTable dts = dtOrig.Clone();
+                    /*foreach(DataRow dr in drs)
+                    {
+                        dts.ImportRow(dr);
+                        dr.Delete();
+                    }*/
+                    DataRow[] drs2 = dtOrigCloned.Select("[" + dtOrigCloned.Columns["Default status (True=Default/False=Non Default)"] + "]" + " in ('FALSE') AND " + "[" + dtOrigCloned.Columns["sales_media_code"] + "]" + " in ('B') AND " + "([" + dtOrigCloned.Columns["Option price"] + "]" + " in (999999.99, 9999999.99, null)" + " or [" + dtOrigCloned.Columns["Option price"] + "]" + " is null )");
+                    foreach(DataRow dr in drs2)
+                    {
+                        dts.ImportRow(dr);
+                        dr.Delete();
+                    }
+                    dataGridView1.DataSource = dts;
+                    lblNumLines.Text = dts.Rows.Count.ToString();
+                    //dtOrigCloned = Delete(dtOrigCloned, dtOrigCloned.Select("[" + dtOrigCloned.Columns["Option price"] + "]" + " is null "));
+                    //dtOrigCloned = Delete(dtOrigCloned, dtOrigCloned.Select("[" + dtOrigCloned.Columns["Default status (True=Default/False=Non Default)"] + "]" + " in ('FALSE') AND " + "[" + dtOrigCloned.Columns["sales_media_code"] + "]" + " in ('B') AND " + "[" + dtOrigCloned.Columns["Option price"] + "]" + " in (999999.99, 9999999.99)"));
 
+                    string filter2 = dtOrigCloned.Columns["catalog_id"] + " = " + "[" + dts.Columns["catalog_id"] + "]" + " AND " + "[" + dtOrigCloned.Columns["order_code"] + "]" + " = " + "[" + dts.Columns["order_code"] + "]" + " AND " + "[" + dtOrigCloned.Columns["Module_id"] + "]" + " = " + "[" + dts.Columns["Module_id"] + "]" + " AND " + "[" + dtOrigCloned.Columns["option_ID"] + "]" + " = " + "[" + dts.Columns["option_ID"] + "]";
+                    
+
+                    dtOrigCloned = Delete(dtOrigCloned, filter2);
+                    dataGridView1.DataSource = dtOrigCloned;
+                    lblNumLines.Text = dtOrigCloned.Rows.Count.ToString();
+                    /*dataGridView1.DataSource = dts;
+                    lblNumLines.Text = dts.Rows.Count.ToString();
+                    //dataGridView1.DataSource = dtOrigCloned;
+                    foreach(DataRow dr in dtOrigCloned.Rows)
+                    {
+                        dtOrig.ImportRow(dr);
+                    }
+                    DataRow[] drFiltered1 = dtOrig.Select("["+dtOrig.Columns["Default status (True=Default/False=Non Default)"]+"]" + " in ('FALSE') or " + "["+dtOrig.Columns["sales_media_code"]+"]" + " in ('B') or " + "["+dtOrig.Columns["Option price"]+"]" + " in (999999.99, 9999999.99) or ["+dtOrig.Columns["Option price"]+"] is null");
+
+                    DataTable dtFiltered1 = dtOrig.Clone();
+                    foreach (DataRow dr in drFiltered1)
+                    {
+                        dtFiltered1.ImportRow(dr);
+                    }
+
+                    dataGridView1.DataSource = dtFiltered1;
+                    lblNumLines.Text = dtFiltered1.Rows.Count.ToString();
+                    string filter = "[" + dtOrig.Columns["Default status (True=Default/False=Non Default)"] + "]" + " in ('FALSE') AND " + "[" + dtOrig.Columns["sales_media_code"] + "]" + " in ('B') AND " + "[" + dtOrig.Columns["Option price"] + "]" + " in (999999.99, 9999999.99, )"; 
+                    dtOrig = Delete(dtOrig, filter);
+                    
+                    //lblNumLines.Text = dtFiltered1.Rows.Count.ToString();
+                    string filter2 = dtOrigCloned.Columns["catalog_id"] + " = " + "[" + dts.Columns["catalog_id"] + "]" + " AND " + "[" + dtOrigCloned.Columns["order_code"] + "]" + " = " + "[" + dts.Columns["order_code"] + "]" + " AND " + "[" + dtOrigCloned.Columns["Module_id"] + "]" + " = " + "[" + dts.Columns["Module_id"] + "]" + " AND " + "[" + dtOrigCloned.Columns["option_ID"] + "]" + " = " + "[" + dts.Columns["option_ID"] + "]";
+                    DataRow[] drFiltered2 = dtOrigCloned.Select(filter2);
+                    DataTable dtFiltered2 = dtOrig.Clone();
+                    foreach (DataRow dr in drFiltered2)
+                    {
+                        dtFiltered2.ImportRow(dr);
+                    }
+                    dataGridView1.DataSource = dtFiltered2;
+                    lblNumLines.Text = dtFiltered2.Rows.Count.ToString();*/
+               }
+               finally
+               {
+                    connection.Close();
+               }
+            }
         }
 
         private void Form1_Load(object sender, EventArgs e)
