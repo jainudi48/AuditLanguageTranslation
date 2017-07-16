@@ -44,10 +44,16 @@
             this.label3 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
             this.catelogText = new System.Windows.Forms.TextBox();
-            this.lblNumLines = new System.Windows.Forms.Label();
+            this.panel2 = new System.Windows.Forms.Panel();
+            this.label6 = new System.Windows.Forms.Label();
+            this.btnExport = new System.Windows.Forms.Button();
+            this.numOfRecTxt = new System.Windows.Forms.TextBox();
+            this.numOfRecDelTxt = new System.Windows.Forms.TextBox();
+            this.label7 = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             this.panel1.SuspendLayout();
             this.regionGroupBox.SuspendLayout();
+            this.panel2.SuspendLayout();
             this.SuspendLayout();
             // 
             // button1
@@ -80,7 +86,6 @@
             // 
             // panel1
             // 
-            this.panel1.Controls.Add(this.lblNumLines);
             this.panel1.Controls.Add(this.regionGroupBox);
             this.panel1.Controls.Add(this.orderStatusCombo);
             this.panel1.Controls.Add(this.languageCombo);
@@ -95,7 +100,7 @@
             this.panel1.Controls.Add(this.label1);
             this.panel1.Location = new System.Drawing.Point(16, 12);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(1739, 195);
+            this.panel1.Size = new System.Drawing.Size(944, 195);
             this.panel1.TabIndex = 3;
             this.panel1.Paint += new System.Windows.Forms.PaintEventHandler(this.panel1_Paint);
             // 
@@ -205,20 +210,65 @@
             this.catelogText.Size = new System.Drawing.Size(361, 26);
             this.catelogText.TabIndex = 3;
             // 
-            // lblNumLines
+            // panel2
             // 
-            this.lblNumLines.AutoSize = true;
-            this.lblNumLines.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.lblNumLines.Location = new System.Drawing.Point(1192, 36);
-            this.lblNumLines.Name = "lblNumLines";
-            this.lblNumLines.Size = new System.Drawing.Size(2, 22);
-            this.lblNumLines.TabIndex = 15;
+            this.panel2.Controls.Add(this.numOfRecDelTxt);
+            this.panel2.Controls.Add(this.label7);
+            this.panel2.Controls.Add(this.numOfRecTxt);
+            this.panel2.Controls.Add(this.btnExport);
+            this.panel2.Controls.Add(this.label6);
+            this.panel2.Location = new System.Drawing.Point(1012, 12);
+            this.panel2.Name = "panel2";
+            this.panel2.Size = new System.Drawing.Size(878, 195);
+            this.panel2.TabIndex = 16;
+            // 
+            // label6
+            // 
+            this.label6.AutoSize = true;
+            this.label6.Location = new System.Drawing.Point(23, 18);
+            this.label6.Name = "label6";
+            this.label6.Size = new System.Drawing.Size(115, 20);
+            this.label6.TabIndex = 16;
+            this.label6.Text = "No. of Records";
+            // 
+            // btnExport
+            // 
+            this.btnExport.Location = new System.Drawing.Point(704, 139);
+            this.btnExport.Name = "btnExport";
+            this.btnExport.Size = new System.Drawing.Size(156, 35);
+            this.btnExport.TabIndex = 17;
+            this.btnExport.Text = "Export to Excel";
+            this.btnExport.UseVisualStyleBackColor = true;
+            // 
+            // numOfRecTxt
+            // 
+            this.numOfRecTxt.Location = new System.Drawing.Point(221, 12);
+            this.numOfRecTxt.Name = "numOfRecTxt";
+            this.numOfRecTxt.Size = new System.Drawing.Size(152, 26);
+            this.numOfRecTxt.TabIndex = 18;
+            // 
+            // numOfRecDelTxt
+            // 
+            this.numOfRecDelTxt.Location = new System.Drawing.Point(221, 82);
+            this.numOfRecDelTxt.Name = "numOfRecDelTxt";
+            this.numOfRecDelTxt.Size = new System.Drawing.Size(152, 26);
+            this.numOfRecDelTxt.TabIndex = 20;
+            // 
+            // label7
+            // 
+            this.label7.AutoSize = true;
+            this.label7.Location = new System.Drawing.Point(23, 88);
+            this.label7.Name = "label7";
+            this.label7.Size = new System.Drawing.Size(175, 20);
+            this.label7.TabIndex = 19;
+            this.label7.Text = "No. of Records Deleted";
             // 
             // LTA_Tool
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1902, 992);
+            this.Controls.Add(this.panel2);
             this.Controls.Add(this.panel1);
             this.Controls.Add(this.dataGridView1);
             this.Name = "LTA_Tool";
@@ -230,6 +280,8 @@
             this.panel1.PerformLayout();
             this.regionGroupBox.ResumeLayout(false);
             this.regionGroupBox.PerformLayout();
+            this.panel2.ResumeLayout(false);
+            this.panel2.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -252,7 +304,12 @@
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.TextBox catelogText;
         private System.Windows.Forms.GroupBox regionGroupBox;
-        private System.Windows.Forms.Label lblNumLines;
+        private System.Windows.Forms.Panel panel2;
+        private System.Windows.Forms.TextBox numOfRecDelTxt;
+        private System.Windows.Forms.Label label7;
+        private System.Windows.Forms.TextBox numOfRecTxt;
+        private System.Windows.Forms.Button btnExport;
+        private System.Windows.Forms.Label label6;
     }
 }
 

@@ -158,6 +158,7 @@ namespace FilterDump
                     adapter.Fill(dataSet);
                     
                     DataTable dtOrigCloned = dataSet.Tables[0];
+                    Int32 numOfRecInitially = dtOrigCloned.Rows.Count;
                     DataTable dtFiltered = filterData(dtOrigCloned);
                     createLookupCols(dtOrigCloned, dtFiltered);
                     deletedLookedUpRows(dtOrigCloned, dtFiltered);
@@ -171,7 +172,9 @@ namespace FilterDump
                     }*/
                     
                     dataGridView1.DataSource = dtOrigCloned;
-                    lblNumLines.Text = dtOrigCloned.Rows.Count.ToString();
+                    Int32 numOfRecLeft = dtOrigCloned.Rows.Count;
+                    numOfRecDelTxt.Text = (numOfRecInitially - numOfRecLeft).ToString();
+                    numOfRecTxt.Text = dtOrigCloned.Rows.Count.ToString();
                     
                     //dtOrigCloned = Delete(dtOrigCloned, dtOrigCloned.Select("[" + dtOrigCloned.Columns["Option price"] + "]" + " is null "));
                     //dtOrigCloned = Delete(dtOrigCloned, dtOrigCloned.Select("[" + dtOrigCloned.Columns["Default status (True=Default/False=Non Default)"] + "]" + " in ('FALSE') AND " + "[" + dtOrigCloned.Columns["sales_media_code"] + "]" + " in ('B') AND " + "[" + dtOrigCloned.Columns["Option price"] + "]" + " in (999999.99, 9999999.99)"));
