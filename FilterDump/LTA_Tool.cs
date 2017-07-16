@@ -19,6 +19,7 @@ namespace FilterDump
         string chassisId = null;
         string language = null;
         string orderStatusCode = null;
+        const string concatenatedCol = "como";
         public LTA_Tool()
         {
             InitializeComponent();
@@ -151,7 +152,6 @@ namespace FilterDump
             using (connection = new SqlConnection(connetionString))
             {
                 DataSet dataSet = new DataSet();
-                //command = new SqlCommand(queryString, connection);
                 try
                 {
                     SqlDataAdapter adapter = new SqlDataAdapter(queryString, connection);
@@ -160,68 +160,17 @@ namespace FilterDump
                     DataTable dtOrigCloned = dataSet.Tables[0];
                     Int32 numOfRecInitially = dtOrigCloned.Rows.Count;
                     DataTable dtFiltered = filterData(dtOrigCloned);
+
                     createLookupCols(dtOrigCloned, dtFiltered);
                     deletedLookedUpRows(dtOrigCloned, dtFiltered);
-                    dtOrigCloned = deleteDuplicateRows(dtOrigCloned, "como");
-                    //DataRow[] drs = dtOrigCloned.Select("[" + dtOrigCloned.Columns["Option price"] + "]" + " is null ");
-                    
-                    /*foreach(DataRow dr in drs)
-                    {
-                        dts.ImportRow(dr);
-                        dr.Delete();
-                    }*/
-                    
+                    dtOrigCloned = deleteDuplicateRows(dtOrigCloned, concatenatedCol);
+                                      
                     dataGridView1.DataSource = dtOrigCloned;
                     Int32 numOfRecLeft = dtOrigCloned.Rows.Count;
                     numOfRecDelTxt.Text = (numOfRecInitially - numOfRecLeft).ToString();
-                    numOfRecTxt.Text = dtOrigCloned.Rows.Count.ToString();
+                    numOfRecLeftTxt.Text = dtOrigCloned.Rows.Count.ToString();
+                    numOfRecInputtedTxt.Text = numOfRecInitially.ToString();
                     
-                    //dtOrigCloned = Delete(dtOrigCloned, dtOrigCloned.Select("[" + dtOrigCloned.Columns["Option price"] + "]" + " is null "));
-                    //dtOrigCloned = Delete(dtOrigCloned, dtOrigCloned.Select("[" + dtOrigCloned.Columns["Default status (True=Default/False=Non Default)"] + "]" + " in ('FALSE') AND " + "[" + dtOrigCloned.Columns["sales_media_code"] + "]" + " in ('B') AND " + "[" + dtOrigCloned.Columns["Option price"] + "]" + " in (999999.99, 9999999.99)"));
-
-                    string filter2 = dtOrigCloned.Columns["catalog_id"] + " = " + "[" + dtFiltered.Columns["catalog_id"] + "]" + " AND " + "[" + dtOrigCloned.Columns["order_code"] + "]" + " = " + "[" + dtFiltered.Columns["order_code"] + "]" + " AND " + "[" + dtOrigCloned.Columns["Module_id"] + "]" + " = " + "[" + dtFiltered.Columns["Module_id"] + "]" + " AND " + "[" + dtOrigCloned.Columns["option_ID"] + "]" + " = " + "[" + dtFiltered.Columns["option_ID"] + "]";
-                    DataRow[] drs3 = dtOrigCloned.Select(filter2);
-                    
-                    /*foreach(DataRow dr in drs3)
-                    {
-                        dtOrigCloned.Rows.Remove(dr);
-                    }*/
-                    //dataGridView1.DataSource = dtOrigCloned;
-                    //lblNumLines.Text = dtOrigCloned.Rows.Count.ToString();
-
-                    //dtOrigCloned = Delete(dtOrigCloned, filter2);
-                    //dataGridView1.DataSource = dtOrigCloned;
-                    //lblNumLines.Text = dtOrigCloned.Rows.Count.ToString();
-                    /*dataGridView1.DataSource = dts;
-                    lblNumLines.Text = dts.Rows.Count.ToString();
-                    //dataGridView1.DataSource = dtOrigCloned;
-                    foreach(DataRow dr in dtOrigCloned.Rows)
-                    {
-                        dtOrig.ImportRow(dr);
-                    }
-                    DataRow[] drFiltered1 = dtOrig.Select("["+dtOrig.Columns["Default status (True=Default/False=Non Default)"]+"]" + " in ('FALSE') or " + "["+dtOrig.Columns["sales_media_code"]+"]" + " in ('B') or " + "["+dtOrig.Columns["Option price"]+"]" + " in (999999.99, 9999999.99) or ["+dtOrig.Columns["Option price"]+"] is null");
-
-                    DataTable dtFiltered1 = dtOrig.Clone();
-                    foreach (DataRow dr in drFiltered1)
-                    {
-                        dtFiltered1.ImportRow(dr);
-                    }
-
-                    dataGridView1.DataSource = dtFiltered1;
-                    lblNumLines.Text = dtFiltered1.Rows.Count.ToString();
-                    string filter = "[" + dtOrig.Columns["Default status (True=Default/False=Non Default)"] + "]" + " in ('FALSE') AND " + "[" + dtOrig.Columns["sales_media_code"] + "]" + " in ('B') AND " + "[" + dtOrig.Columns["Option price"] + "]" + " in (999999.99, 9999999.99, )"; 
-                    dtOrig = Delete(dtOrig, filter);
-                    
-                    //lblNumLines.Text = dtFiltered1.Rows.Count.ToString();
-                    string filter2 = dtOrigCloned.Columns["catalog_id"] + " = " + "[" + dts.Columns["catalog_id"] + "]" + " AND " + "[" + dtOrigCloned.Columns["order_code"] + "]" + " = " + "[" + dts.Columns["order_code"] + "]" + " AND " + "[" + dtOrigCloned.Columns["Module_id"] + "]" + " = " + "[" + dts.Columns["Module_id"] + "]" + " AND " + "[" + dtOrigCloned.Columns["option_ID"] + "]" + " = " + "[" + dts.Columns["option_ID"] + "]";
-                    DataRow[] drFiltered2 = dtOrigCloned.Select(filter2);
-                    DataTable dtFiltered2 = dtOrig.Clone();
-                    foreach (DataRow dr in drFiltered2)
-                    {
-                        dtFiltered2.ImportRow(dr);
-                    }
-                    dataGridView1.DataSource = dtFiltered2;
-                    lblNumLines.Text = dtFiltered2.Rows.Count.ToString();*/
                }
                finally
                {
@@ -251,15 +200,15 @@ namespace FilterDump
 
         private void createLookupCols(DataTable dtOrigCloned, DataTable dtFiltered)
         {
-            dtOrigCloned.Columns.Add("como", typeof(string));
-            dtFiltered.Columns.Add("como", typeof(string));
+            dtOrigCloned.Columns.Add(concatenatedCol, typeof(string));
+            dtFiltered.Columns.Add(concatenatedCol, typeof(string));
             foreach(DataRow dr in dtOrigCloned.Rows)
             {
-                dr["como"] = dr["catalog_id"].ToString().Trim() + dr["order_code"].ToString().Trim() + dr["Module_id"].ToString().Trim() + dr["option_ID"].ToString().Trim();  
+                dr[concatenatedCol] = dr["catalog_id"].ToString().Trim() + dr["order_code"].ToString().Trim() + dr["Module_id"].ToString().Trim() + dr["option_ID"].ToString().Trim();  
             }
             foreach(DataRow dr in dtFiltered.Rows)
             {
-                dr["como"] = dr["catalog_id"].ToString().Trim() + dr["order_code"].ToString().Trim() + dr["Module_id"].ToString().Trim() + dr["option_ID"].ToString().Trim();  
+                dr[concatenatedCol] = dr["catalog_id"].ToString().Trim() + dr["order_code"].ToString().Trim() + dr["Module_id"].ToString().Trim() + dr["option_ID"].ToString().Trim();  
             }
         }
 
@@ -270,7 +219,7 @@ namespace FilterDump
             {
                 foreach(DataRow dr2 in dtFiltered.Rows)
                 {
-                    if(dr1["como"].Equals(dr2["como"]))
+                    if(dr1[concatenatedCol].Equals(dr2[concatenatedCol]))
                     {
                         deletedRows.Add(dr1);
                     }
@@ -288,8 +237,6 @@ namespace FilterDump
             Dictionary<string, string> hTable = new Dictionary<string, string>();
             List<DataRow> duplicateList = new List<DataRow>();
 
-            //Add list of all the unique item value to hashtable, which stores combination of key, value pair.
-            //And add duplicate item value in arraylist.
             foreach (DataRow drow in dTable.Rows)
             {
                 if (hTable.ContainsKey(drow[colName].ToString()))
@@ -298,11 +245,9 @@ namespace FilterDump
                     hTable.Add(drow[colName].ToString(), string.Empty);
             }
 
-            //Removing a list of duplicate items from datatable.
             foreach (DataRow dRow in duplicateList)
                 dTable.Rows.Remove(dRow);
 
-            //Datatable which contains unique records will be return as output.
             return dTable;
         }
         private void Form1_Load(object sender, EventArgs e)
