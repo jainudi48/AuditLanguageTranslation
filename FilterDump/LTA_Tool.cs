@@ -1,4 +1,6 @@
 ﻿using System;
+using System.IO;
+using System.Diagnostics;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -9,6 +11,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Data.SqlClient;
+using Excel = Microsoft.Office.Interop.Excel;
 
 namespace FilterDump
 {
@@ -20,6 +23,8 @@ namespace FilterDump
         string language = null;
         string orderStatusCode = null;
         const string concatenatedCol = "como";
+        private DataTable dataTableCleaned = null;
+        private DataGridView dgvCleanedData = null;
         public LTA_Tool()
         {
             InitializeComponent();
@@ -160,12 +165,15 @@ namespace FilterDump
                     DataTable dtOrigCloned = dataSet.Tables[0];
                     Int32 numOfRecInitially = dtOrigCloned.Rows.Count;
                     DataTable dtFiltered = filterData(dtOrigCloned);
+                    dataTableCleaned = dtFiltered;
 
                     createLookupCols(dtOrigCloned, dtFiltered);
                     deletedLookedUpRows(dtOrigCloned, dtFiltered);
                     dtOrigCloned = deleteDuplicateRows(dtOrigCloned, concatenatedCol);
                                       
                     dataGridView1.DataSource = dtOrigCloned;
+                    
+                    dgvCleanedData = dataGridView1;
                     Int32 numOfRecLeft = dtOrigCloned.Rows.Count;
                     numOfRecDelTxt.Text = (numOfRecInitially - numOfRecLeft).ToString();
                     numOfRecLeftTxt.Text = dtOrigCloned.Rows.Count.ToString();
@@ -250,6 +258,116 @@ namespace FilterDump
 
             return dTable;
         }
+
+        private object[][] convertDataToArray(DataTable dTable)
+        {
+            
+            int i = 0, j = 0;
+            var tableEnumerable = dTable.AsEnumerable();
+            var rowEnumerable = tableEnumerable.AsEnumerable();
+            object[][] dTableArray = new object[tableEnumerable.Count()][];
+            foreach(var tableEnum in tableEnumerable)
+            {
+                j = 0;
+                dTableArray[i] = new object[tableEnumerable.Count()];
+                foreach(var rowEnum in rowEnumerable)
+                {
+                    dTableArray[i][j] = (object)rowEnum;
+                    j++;
+                }
+                i++;
+            }
+            return dTableArray;
+        }
+
+        private void exportDataToExcel(DataTable dTable)
+        {
+            Excel.Application xlApp = new Excel.Application();
+            Excel.Workbook xlWorkbook = null;
+            Excel._Worksheet xlWorksheet = null;
+            Excel.Range xlRange = null;
+            try
+            {
+                xlWorkbook = xlApp.Workbooks.Add();
+                
+            }
+            catch(Exception e)
+            {
+                MessageBox.Show("Error opening Excel!");
+            }
+            try
+            {
+                xlWorksheet = xlWorkbook.Sheets[1];
+            }
+            catch(Exception e)
+            {
+                MessageBox.Show("Expected worksheet not found!");
+            }
+            //xlWorkbook.Worksheets.Add(dTable, "Sheetname");
+            object[][] dTableArray = convertDataToArray(dTable);
+            
+
+        }
+
+        private void ExportDataToExcel(DataGridView dgv)
+        {
+            // Creating a Excel object. 
+            Microsoft.Office.Interop.Excel._Application excel = new Microsoft.Office.Interop.Excel.Application();
+            Microsoft.Office.Interop.Excel._Workbook workbook = excel.Workbooks.Add(Type.Missing);
+            Microsoft.Office.Interop.Excel._Worksheet worksheet = null;
+
+            try
+            {
+
+                worksheet = workbook.ActiveSheet;
+
+                worksheet.Name = "ExportedFromDatGrid";
+
+                int cellRowIndex = 1;
+                int cellColumnIndex = 1;
+
+                //Loop through each row and read value from each column. 
+                for (int i = 0; i < dgv.Rows.Count - 1; i++)
+                {
+                    for (int j = 0; j < dgv.Columns.Count; j++)
+                    {
+                        // Excel index starts from 1,1. As first Row would have the Column headers, adding a condition check. 
+                        if (cellRowIndex == 1)
+                        {
+                            worksheet.Cells[cellRowIndex, cellColumnIndex] = dgv.Columns[j].HeaderText;
+                        }
+                        else
+                        {
+                            worksheet.Cells[cellRowIndex, cellColumnIndex] = dgv.Rows[i].Cells[j].Value.ToString();
+                        }
+                        cellColumnIndex++;
+                    }
+                    cellColumnIndex = 1;
+                    cellRowIndex++;
+                }
+
+                //Getting the location and file name of the excel to save from user. 
+                SaveFileDialog saveDialog = new SaveFileDialog();
+                saveDialog.Filter = "Excel files (*.xlsx)|*.xlsx|All files (*.*)|*.*";
+                saveDialog.FilterIndex = 2;
+
+                if (saveDialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+                {
+                    workbook.SaveAs(saveDialog.FileName);
+                    MessageBox.Show("Export Successful");
+                }
+            }
+            catch (System.Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+            finally
+            {
+                excel.Quit();
+                workbook = null;
+                excel = null;
+            } 
+        }
         private void Form1_Load(object sender, EventArgs e)
         {
             loadComboValues();
@@ -310,6 +428,23 @@ namespace FilterDump
                 // Generates the text shown in the combo box
                 return Name;
             }
+        }
+
+        private void btnExport_Click(object sender, EventArgs e)
+        {
+            if(dgvCleanedData != null)
+            {
+                ExportDataToExcel(dgvCleanedData);
+            }
+            else
+            {
+                MessageBox.Show("Data not found to export!");
+            }
+        }
+
+        private void dataGridView1_CellContentClick(object sender, DataGridViewCellEventArgs e)
+        {
+
         }
     }
 }

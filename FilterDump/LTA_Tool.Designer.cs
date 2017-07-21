@@ -45,13 +45,13 @@
             this.label2 = new System.Windows.Forms.Label();
             this.catelogText = new System.Windows.Forms.TextBox();
             this.panel2 = new System.Windows.Forms.Panel();
+            this.numOfRecInputtedTxt = new System.Windows.Forms.TextBox();
+            this.label8 = new System.Windows.Forms.Label();
             this.numOfRecDelTxt = new System.Windows.Forms.TextBox();
             this.label7 = new System.Windows.Forms.Label();
             this.numOfRecLeftTxt = new System.Windows.Forms.TextBox();
             this.btnExport = new System.Windows.Forms.Button();
             this.label6 = new System.Windows.Forms.Label();
-            this.numOfRecInputtedTxt = new System.Windows.Forms.TextBox();
-            this.label8 = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             this.panel1.SuspendLayout();
             this.regionGroupBox.SuspendLayout();
@@ -64,7 +64,7 @@
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(258, 35);
             this.button1.TabIndex = 0;
-            this.button1.Text = "GENERATE SQL QUERY ";
+            this.button1.Text = "EXTRACT AND CLEAN";
             this.button1.UseVisualStyleBackColor = true;
             this.button1.Click += new System.EventHandler(this.button1_Click);
             // 
@@ -76,6 +76,7 @@
             this.dataGridView1.RowTemplate.Height = 28;
             this.dataGridView1.Size = new System.Drawing.Size(1877, 758);
             this.dataGridView1.TabIndex = 1;
+            this.dataGridView1.CellContentClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridView1_CellContentClick);
             // 
             // label1
             // 
@@ -103,7 +104,7 @@
             this.panel1.Controls.Add(this.label1);
             this.panel1.Location = new System.Drawing.Point(16, 12);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(911, 195);
+            this.panel1.Size = new System.Drawing.Size(1129, 195);
             this.panel1.TabIndex = 3;
             this.panel1.Paint += new System.Windows.Forms.PaintEventHandler(this.panel1_Paint);
             // 
@@ -223,55 +224,14 @@
             this.panel2.Controls.Add(this.numOfRecLeftTxt);
             this.panel2.Controls.Add(this.btnExport);
             this.panel2.Controls.Add(this.label6);
-            this.panel2.Location = new System.Drawing.Point(979, 12);
+            this.panel2.Location = new System.Drawing.Point(1173, 12);
             this.panel2.Name = "panel2";
-            this.panel2.Size = new System.Drawing.Size(911, 195);
+            this.panel2.Size = new System.Drawing.Size(717, 195);
             this.panel2.TabIndex = 16;
-            // 
-            // numOfRecDelTxt
-            // 
-            this.numOfRecDelTxt.Location = new System.Drawing.Point(221, 74);
-            this.numOfRecDelTxt.Name = "numOfRecDelTxt";
-            this.numOfRecDelTxt.Size = new System.Drawing.Size(152, 26);
-            this.numOfRecDelTxt.TabIndex = 20;
-            // 
-            // label7
-            // 
-            this.label7.AutoSize = true;
-            this.label7.Location = new System.Drawing.Point(23, 80);
-            this.label7.Name = "label7";
-            this.label7.Size = new System.Drawing.Size(175, 20);
-            this.label7.TabIndex = 19;
-            this.label7.Text = "No. of Records Deleted";
-            // 
-            // numOfRecLeftTxt
-            // 
-            this.numOfRecLeftTxt.Location = new System.Drawing.Point(221, 40);
-            this.numOfRecLeftTxt.Name = "numOfRecLeftTxt";
-            this.numOfRecLeftTxt.Size = new System.Drawing.Size(152, 26);
-            this.numOfRecLeftTxt.TabIndex = 18;
-            // 
-            // btnExport
-            // 
-            this.btnExport.Location = new System.Drawing.Point(632, 139);
-            this.btnExport.Name = "btnExport";
-            this.btnExport.Size = new System.Drawing.Size(258, 35);
-            this.btnExport.TabIndex = 17;
-            this.btnExport.Text = "Export to Excel";
-            this.btnExport.UseVisualStyleBackColor = true;
-            // 
-            // label6
-            // 
-            this.label6.AutoSize = true;
-            this.label6.Location = new System.Drawing.Point(23, 46);
-            this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(141, 20);
-            this.label6.TabIndex = 16;
-            this.label6.Text = "No. of Records left";
             // 
             // numOfRecInputtedTxt
             // 
-            this.numOfRecInputtedTxt.Location = new System.Drawing.Point(221, 6);
+            this.numOfRecInputtedTxt.Location = new System.Drawing.Point(231, 12);
             this.numOfRecInputtedTxt.Name = "numOfRecInputtedTxt";
             this.numOfRecInputtedTxt.Size = new System.Drawing.Size(152, 26);
             this.numOfRecInputtedTxt.TabIndex = 22;
@@ -279,11 +239,54 @@
             // label8
             // 
             this.label8.AutoSize = true;
-            this.label8.Location = new System.Drawing.Point(23, 12);
+            this.label8.Location = new System.Drawing.Point(28, 16);
             this.label8.Name = "label8";
             this.label8.Size = new System.Drawing.Size(177, 20);
             this.label8.TabIndex = 21;
             this.label8.Text = "No. of Records inputted";
+            // 
+            // numOfRecDelTxt
+            // 
+            this.numOfRecDelTxt.Location = new System.Drawing.Point(231, 80);
+            this.numOfRecDelTxt.Name = "numOfRecDelTxt";
+            this.numOfRecDelTxt.Size = new System.Drawing.Size(152, 26);
+            this.numOfRecDelTxt.TabIndex = 20;
+            // 
+            // label7
+            // 
+            this.label7.AutoSize = true;
+            this.label7.Location = new System.Drawing.Point(28, 84);
+            this.label7.Name = "label7";
+            this.label7.Size = new System.Drawing.Size(175, 20);
+            this.label7.TabIndex = 19;
+            this.label7.Text = "No. of Records Deleted";
+            // 
+            // numOfRecLeftTxt
+            // 
+            this.numOfRecLeftTxt.Location = new System.Drawing.Point(231, 46);
+            this.numOfRecLeftTxt.Name = "numOfRecLeftTxt";
+            this.numOfRecLeftTxt.Size = new System.Drawing.Size(152, 26);
+            this.numOfRecLeftTxt.TabIndex = 18;
+            // 
+            // btnExport
+            // 
+            this.btnExport.Location = new System.Drawing.Point(125, 148);
+            this.btnExport.Name = "btnExport";
+            this.btnExport.Size = new System.Drawing.Size(258, 35);
+            this.btnExport.TabIndex = 17;
+            this.btnExport.Text = "EXPORT TO EXCEL";
+            this.btnExport.UseVisualStyleBackColor = true;
+            this.btnExport.Visible = false;
+            this.btnExport.Click += new System.EventHandler(this.btnExport_Click);
+            // 
+            // label6
+            // 
+            this.label6.AutoSize = true;
+            this.label6.Location = new System.Drawing.Point(28, 50);
+            this.label6.Name = "label6";
+            this.label6.Size = new System.Drawing.Size(141, 20);
+            this.label6.TabIndex = 16;
+            this.label6.Text = "No. of Records left";
             // 
             // LTA_Tool
             // 
